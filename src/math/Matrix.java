@@ -1,5 +1,9 @@
 package math;
 
+import jdk.nashorn.internal.runtime.arrays.ArrayIndex;
+
+import java.util.ArrayList;
+
 /**
  * Created by Binio on 2017-01-21.
  */
@@ -8,6 +12,7 @@ public class Matrix{
     private int[] rowNumbers;
     private int[] columnNumbers;
     private int[] positionNumbers;
+    ArrayList<Integer[]> list = new ArrayList<>();
 
 
     public Matrix(int[][] matrix){
@@ -18,6 +23,8 @@ public class Matrix{
     public Matrix(int[][] matrix, int[] positions){
         this.matrix = matrix;
         positionNumbers = positions;
+        columnNumbers = positions;
+        rowNumbers = positions;
     }
 
     private void setDefaultNumbers(){
@@ -72,17 +79,27 @@ public class Matrix{
     public String toString(){
         String s = "";
         s+= String.format("%5s","");
-        for(int i = 0; i < matrix[0].length; i++){
-            s+= String.format("%4d,",i);
-        }
-        s+= "\n";
-        for(int i = 0; i < matrix.length; i++){
-            s += String.format("%3d:%s",i,"[");
-            for(int j = 0; j < matrix[0].length; j++){
-                s+= String.format("%4d,",matrix[i][j]);
+            for (int i = 0; i < matrix[0].length; i++) {
+                try {
+                    s += String.format("%4d,", columnNumbers[i]);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Cos poszlo nie tak");
+                }
             }
-            s += "]\n";
-        }
+        s+= "\n";
+
+            for (int i = 0; i < matrix.length; i++) {
+                try {
+                s += String.format("%3d:%s", rowNumbers[i], "[");
+                }catch(IndexOutOfBoundsException e){
+                    System.out.println("Cos poszlo nie tak");
+                }
+                for (int j = 0; j < matrix[0].length; j++) {
+                    s += String.format("%4d,", matrix[i][j]);
+                }
+                s += "]\n";
+            }
+
         return s + "\n";
     }
 
@@ -100,5 +117,13 @@ public class Matrix{
 
     public int getColumns(){
         return matrix[0].length;
+    }
+
+    public int[] getRowNumbers() {
+        return rowNumbers;
+    }
+
+    public int[] getColumnNumbers() {
+        return columnNumbers;
     }
 }
