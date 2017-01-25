@@ -17,6 +17,7 @@ public class MathSolver {
     private Matrix m2; //2nd matrix split by column
     private ArrayList<Matrix> splitM1 = new ArrayList<>(); //1st matrix split to smaller parts
     private ArrayList<Matrix> splitM2 = new ArrayList<>(); //2nd matrix split to smaller parts
+    private boolean matricesSplit = false;
 
     public MathSolver(AbstractComputer computer){
         this.computer = computer;
@@ -51,11 +52,13 @@ public class MathSolver {
         for (int i = 0; i < splitAmount; i++) {
             /** EACH PART OF ARRAY WILL BE SENT TO ANOTHER COMPUTER AND WILL BE PROCESSED BY IT'S MATHSOLVER **/
 //            copyArraysByRows(counter, connectionsLeftToHandle);
-            copyArraysByColumns(counter, connectionsLeftToHandle);
-            counter += m1.getRows() / linesLeftToSplit; //m1.getRows() or m2.getColumns() as they need to be the same number
+            copyArraysRows(counter, connectionsLeftToHandle);
+//            copyArraysByColumns(counter, connectionsLeftToHandle);
+            counter += splitM1.get(i).getRows(); //m1.getRows() or m2.getColumns() as they need to be the same number
             connectionsLeftToHandle--;
         }
         splitM2.add(m2); //m2 is untouched until everything is ready for calculations
+        matricesSplit = true;
     }
 
     private void splitToSendToProcessors(){
@@ -85,6 +88,30 @@ public class MathSolver {
             }
             rowsRdy = true;
             columns[k] = m1.getColumnNumbers()[i];
+            k++;
+        }
+        splitM1.add(new Matrix(tmp, rows, columns));
+    }
+
+    private void copyArraysRows(int startingPosition, int splitAmount){
+        int[][] matrix = m1.getMatrix();
+
+        int amountToSplit = (matrix.length-startingPosition)/splitAmount; //
+        int k = 0;
+        int[] rows = new int[amountToSplit];
+        int[] columns = new int[matrix[0].length];
+        int[][] tmp = new int[amountToSplit][matrix[0].length];
+        int numberOfIterations = amountToSplit + startingPosition;
+
+        for(int i = 0; i < matrix[0].length; i++){
+            columns[i] = i;
+        }
+
+        for(int i = startingPosition; i < numberOfIterations; i++){
+            for(int j = 0; j < matrix[0].length; j++){
+                tmp[k][j] = matrix[i][j];
+            }
+            rows[k] = m1.getRowNumbers()[i];
             k++;
         }
         splitM1.add(new Matrix(tmp, rows, columns));
@@ -130,5 +157,21 @@ public class MathSolver {
 
     public Matrix getM1() {
         return m1;
+    }
+
+    public boolean isMatricesSplit() {
+        return matricesSplit;
+    }
+
+    public ArrayList<Matrix> getSplitM1() {
+        return splitM1;
+    }
+
+    public ArrayList<Matrix> getSplitM2() {
+        return splitM2;
+    }
+
+    public Matrix getM2() {
+        return m2;
     }
 }

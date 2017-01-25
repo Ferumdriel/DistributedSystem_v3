@@ -5,4 +5,8 @@ package hardware;
  */
 public class Computer extends AbstractComputer {
 
+    @Override
+    public void run() {
+
+    }
 }

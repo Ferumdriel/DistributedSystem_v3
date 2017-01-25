@@ -1,5 +1,7 @@
 package hardware;
 
+import math.Matrix;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import java.util.List;
  */
 public class MultiComputer extends AbstractComputer{
     private MultiComputer parent;
+
 
     //MASTER MASTER
     public MultiComputer(int id){
@@ -22,11 +25,16 @@ public class MultiComputer extends AbstractComputer{
         parent = mc;
         sonsList = new ArrayList<>();
     }
+
+
+
     public void createSon(int id){
         MultiComputer mc = new MultiComputer(id, this);
         sonsList.add(mc);
             System.out.println("Son: " + id + " of: " + mc.parent.id + " has been created");
     }
+
+
 
     public List<MultiComputer> getSonsList() {
         return sonsList;
@@ -47,6 +55,11 @@ public class MultiComputer extends AbstractComputer{
     }
 
     public void listTree(List<MultiComputer> list){
+
+    }
+
+    @Override
+    public void run() {
 
     }
 }
