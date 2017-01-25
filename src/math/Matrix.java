@@ -20,11 +20,11 @@ public class Matrix{
         setDefaultNumbers();
     }
 
-    public Matrix(int[][] matrix, int[] positions){
+    public Matrix(int[][] matrix, int[] rows, int[] columns){
         this.matrix = matrix;
-        positionNumbers = positions;
-        columnNumbers = positions;
-        rowNumbers = positions;
+        columnNumbers = columns;
+        rowNumbers = rows;
+        positionNumbers = assignPositions();
     }
 
     private void setDefaultNumbers(){
@@ -40,6 +40,22 @@ public class Matrix{
 
     public Matrix(Matrix m){
         copy(m);
+    }
+
+    private int[] copyInt(int[] copy){
+        int[] tmp = new int[copy.length];
+        for(int i = 0; i < copy.length; i++){
+            tmp[i] = copy[i];
+        }
+        return tmp;
+    }
+
+    private int[] assignPositions(){
+        if(rowNumbers.length == matrix.length){
+            return columnNumbers;
+        }else{
+            return rowNumbers;
+        }
     }
 
     private void copy(Matrix m){
@@ -79,21 +95,14 @@ public class Matrix{
     public String toString(){
         String s = "";
         s+= String.format("%5s","");
+        //prepare column numbers
             for (int i = 0; i < matrix[0].length; i++) {
-                try {
-                    s += String.format("%4d,", columnNumbers[i]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println("Cos poszlo nie tak");
-                }
+//                s += String.format("%4d,", columnNumbers[i]);
+                s += String.format("%4d,", columnNumbers[i]); //before adding it columnNumbers and rowNumbers need to be fixed (so each will represent properly)
             }
         s+= "\n";
-
             for (int i = 0; i < matrix.length; i++) {
-                try {
-                s += String.format("%3d:%s", rowNumbers[i], "[");
-                }catch(IndexOutOfBoundsException e){
-                    System.out.println("Cos poszlo nie tak");
-                }
+                s += String.format("%3d:%s", rowNumbers[i], "["); //print proper row number before printing row values
                 for (int j = 0; j < matrix[0].length; j++) {
                     s += String.format("%4d,", matrix[i][j]);
                 }
