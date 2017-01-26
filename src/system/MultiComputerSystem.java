@@ -16,11 +16,12 @@ public class MultiComputerSystem implements Runnable{
     public static final int MASTER_SONS_SONS = 3;
     public static final int MASTER_SONS_SONS_SONS = 4;
 
-    AbstractComputer master;
+    MultiComputer master;
     List<MultiComputer> allConnected;
     private boolean systemGenerated = false;
     private boolean running = false;
     private Thread thread;
+    private boolean taskCompleted = false;
 
     Matrix m1;
     Matrix m2;
@@ -92,17 +93,9 @@ public class MultiComputerSystem implements Runnable{
     public void run() {
         generateSystem();
 
-        double delta = 0;
-        long now;
-        long lastTime = System.nanoTime();
-        long timer = 0;
-
-//        while(running){
-//            now = System.nanoTime();
-//            delta += (now - lastTime);
-//            lastTime = now;
-            master.tick();
-//        }
+        while(!taskCompleted){
+            master.start();
+        }
 
         //in case it didn't stop earlier
         stop();

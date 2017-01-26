@@ -60,6 +60,34 @@ public class MultiComputer extends AbstractComputer{
 
     @Override
     public void run() {
+        if (!sonsList.isEmpty()) {
+            for(MultiComputer m: sonsList){
+                m.start();
+            }
+        }
+        tick();
+
+    }
+
+    public void start(){
+        if(running){
+            return;
+        }
+        running = true;
+        thread = new Thread(this);
+        thread.start();
+    }
+
+    public void stop(){
+        if(!running) {
+            return;
+        }
+        running = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 }
