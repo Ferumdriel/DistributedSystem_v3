@@ -16,8 +16,8 @@ public class MatrixDividerTest {
 
         MatrixDivider divider = prepDivider();
         divider.divide();
-        int expectedPosition = 4; //positions[1][4] == get(5)
-        assertEquals(expectedPosition, divider.getPositions().get(5)[1]);
+        int expectedPosition = 2; //positions[1][4] == get(5)
+        assertEquals(expectedPosition, divider.getPositions().get(20)[0]); //get(20)[0] -> m1.row = 2 {0,1,2,3,4,5,6,7,8,9}
     }
     // SUPPORT METHOD FOR DIVIDE()
     private MatrixDivider prepDivider(){
@@ -35,7 +35,7 @@ public class MatrixDividerTest {
                 test2[i][j] = i + j;
             }
         }
-        return new MatrixDivider(new Matrix(test), new Matrix(test2));
+        return new MatrixDivider(new Matrix(test2), new Matrix(test));
     }
 
 

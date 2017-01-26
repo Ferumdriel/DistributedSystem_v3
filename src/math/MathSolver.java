@@ -39,18 +39,17 @@ public class MathSolver {
 
         int limit = computer.getProcessors().length;
         int[][] matrix = new int[m1.getColumns()][m2.getRows()];
-        int[] rows = new int[m1.getRows()];
-        int[] columns = new int[m2.getColumns()];
-        columns = m2.getColumnNumbers();
-        rows = m1.getRowNumbers();
+        int[] rows = m2.getColumnNumbers();
+        int[] columns = m1.getRowNumbers();
 
 
         int k = 0;
         for(int i = 0; i < divider.getPairs().size(); i++){ //go through the list of all pairs
-            for(int j = 0; j < divider.getPairs().get(i).length; i++){ //go through all rows of pairs (their sum will give final value)
-                computer.getProcessors()[k].multiply(divider.getPairs().get(i)[j][0], divider.getPairs().get(i)[j][1]);
-                matrix[divider.getPositions().get(i)[0]][divider.getPositions().get(i)[1]] = computer.getProcessors()[k].getResult();
-                k++;
+            for(int j = 0; j < divider.getPairs().get(i).length; j++){ //go through all rows of pairs (their sum will give final value)
+                if(!computer.getProcessors()[k].isBusy()) {
+                    computer.getProcessors()[k].multiply(divider.getPairs().get(i)[j][0], divider.getPairs().get(i)[j][1]);
+                    matrix[divider.getPositions().get(i)[0]][divider.getPositions().get(i)[1]] = computer.getProcessors()[k].getResult();
+                }k++;
                 if(k >= limit){
                     k = 0;
                 }
@@ -63,7 +62,7 @@ public class MathSolver {
 
     public void splitMatrix(int splitAmount){ //splitAmount == amount of computers that can receive parts of this matrix
         if (checkIfCorrect()) {
-            if (!computer.isReadyToExecute()) {
+            if (!computer.isReadyToExecute() && !computer.isAlreadySplit()) {
                 splitToSendFurther(splitAmount);
             }else{
                 solveMatrix();

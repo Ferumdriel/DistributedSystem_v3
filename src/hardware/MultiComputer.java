@@ -17,6 +17,7 @@ public class MultiComputer extends AbstractComputer{
         this.id = id;
         parent = null;
         sonsList = new ArrayList<>();
+        generateProcessors();
     }
 
     //MASTER'S SONS AND SONS
@@ -24,6 +25,7 @@ public class MultiComputer extends AbstractComputer{
         this.id = id;
         parent = mc;
         sonsList = new ArrayList<>();
+        generateProcessors();
     }
 
 
@@ -58,6 +60,15 @@ public class MultiComputer extends AbstractComputer{
 
     }
 
+//    public void run(){
+//        if(!sonsList.isEmpty()){
+//            for(MultiComputer m: sonsList){
+//                m.start();
+//            }
+//        }
+//        tick();
+//    }
+
     @Override
     public void run() {
         if (!sonsList.isEmpty()) {
@@ -76,6 +87,7 @@ public class MultiComputer extends AbstractComputer{
         running = true;
         thread = new Thread(this);
         thread.start();
+        start();
     }
 
     public void stop(){

@@ -122,4 +122,12 @@ public class MultiComputerSystem implements Runnable{
         }
 
     }
+
+    public boolean isTaskCompleted() {
+        return taskCompleted;
+    }
+
+    public void setTaskCompleted(boolean taskCompleted) {
+        this.taskCompleted = taskCompleted;
+    }
 }

@@ -11,6 +11,7 @@ public class Processor {
     private int y;
     private int result;
     private int[] finalPosition;
+    private boolean busy = false;
 
 
     public void multiply(int x, int y){
@@ -35,5 +36,13 @@ public class Processor {
 
     public void setFinalPosition(int[] finalPosition) {
         this.finalPosition = finalPosition;
+    }
+
+    public boolean isBusy() {
+        return busy;
+    }
+
+    public void setBusy(boolean busy) {
+        this.busy = busy;
     }
 }

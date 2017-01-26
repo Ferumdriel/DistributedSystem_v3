@@ -38,7 +38,7 @@ public class MatrixDivider {
         for(int i = 0; i < m1.getRows(); i++){ //go through every row of m1
             tmpM1 = m1.getMatrix()[i]; //read specific row of first matrix
             for(int j = 0; j < m2.getColumns(); j++){ //go through every column of m2
-                tmpM2 = m2.getMatrix()[j]; //read specific column of second matrix
+//                tmpM2 = m2.getMatrix()[j]; //read specific column of second matrix
                 for(int k = 0; k < m1.getColumns(); k++){ //go through every value in specific column
                     tmpPairs[k][0] = tmpM1[k];
 //                    try {
@@ -47,12 +47,30 @@ public class MatrixDivider {
 //                        System.out.println("k: " + k + ", " + tmpPairs[k-1][1]);
 //                    }
                 }
-                pairs.add(tmpPairs);
+                pairs.add(cloneDoubleArray(tmpPairs));
                 tmpPos[0] = i;
                 tmpPos[1] = j;
-                positions.add(tmpPos);
+                positions.add(cloneArray(tmpPos));
             }
         }
+    }
+
+    private int[][] cloneDoubleArray(int[][] array){
+        int[][] tmp = new int[array.length][array[0].length];
+        for(int i = 0; i < tmp.length; i++){
+            for(int j = 0; j < tmp[0].length; j++){
+                tmp[i][j] = array[i][j];
+            }
+        }
+        return tmp;
+    }
+
+    private int[] cloneArray(int[] array){
+        int[] tmp = new int[array.length];
+        for(int i = 0; i < tmp.length; i++){
+            tmp[i] = array[i];
+        }
+        return tmp;
     }
 
     public ArrayList<int[][]> getPairs() {

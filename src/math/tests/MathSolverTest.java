@@ -11,19 +11,18 @@ import static org.junit.Assert.*;
  * Created by Binio on 2017-01-26.
  */
 public class MathSolverTest {
+
     @Test
-    public void splitMatrix() throws Exception {
-
-    }
-
     public void solveMatrix() throws Exception {
         MultiComputer mc = new MultiComputer(1);
         ExampleMatrix em = new ExampleMatrix();
         Matrix m = em.getM();
+        mc.setMatrices(m,m);
         MathSolver solver = new MathSolver(mc);
+        solver.addMatrixes(m,m);
         solver.solveMatrix();
-        int expectedValue = 55;
-        assertEquals(expectedValue,mc.getFinalM().getMatrix()[1][2]);
+        int expectedValue = 30;
+        assertEquals(expectedValue,mc.getFinalM().getMatrix()[0][0]);
     }
 
 }

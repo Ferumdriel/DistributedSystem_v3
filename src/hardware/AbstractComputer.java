@@ -18,8 +18,11 @@ public abstract class AbstractComputer implements Runnable{
     protected MathSolver solver = new MathSolver(this);
     protected MatrixDivider divider = new MatrixDivider();
     protected Processor[] processors = new Processor[PROCESSORS_AMOUNT];
+
+    //process of splitting
+    protected boolean alreadySplit = false;
     protected boolean readyToExecute = false;
-    protected boolean matricesSent = false;
+
     protected boolean matrixSolved = false;
 
     protected boolean running = false;
@@ -32,11 +35,22 @@ public abstract class AbstractComputer implements Runnable{
     protected List<Matrix> sonsResults = new ArrayList<>();
     protected boolean matrixSentToParent = false;
 
+    //podejscie nr 2
+    protected boolean sentToSons = false;
+    protected boolean readyToSolve = false;
+    protected boolean sentToParent = false;
+
     public boolean isReadyToExecute(){
         if(solver.getM1().getRows()==1 || sonsList.isEmpty()){
             return true;
         }
         else return false;
+    }
+
+    protected void generateProcessors(){
+        for(int i = 0; i < processors.length; i++){
+            processors[i] = new Processor();
+        }
     }
 
     public MathSolver getSolver() {
@@ -49,15 +63,15 @@ public abstract class AbstractComputer implements Runnable{
         solver.addMatrixes(m1,m2);
     }
 
-    private void sendMatrices(){
+    protected void sendMatrices(){
         int k = 0;
         for(MultiComputer m: sonsList){
             m.setMatrices(solver.getSplitM1().get(k++), solver.getM2());
         }
-        matricesSent = true;
+        sentToSons = true;
     }
 
-    private void getInfoAboutSentMatrices(){
+    protected void getInfoAboutSentMatrices(){
         for(AbstractComputer m: sonsList){
             System.out.println("Son: " + m.id);
             System.out.println("M1: ");
@@ -67,7 +81,7 @@ public abstract class AbstractComputer implements Runnable{
         }
     }
 
-    private void getFinalMatrices(){
+    protected void getFinalMatrices(){
         int k = 0;
         boolean[] checkedList = new boolean[sonsList.size()]; //false by default
         while(k < sonsList.size()) {
@@ -83,7 +97,7 @@ public abstract class AbstractComputer implements Runnable{
         }
     }
 
-    private void combineMatrices(){
+    protected void combineMatrices(){
         if(!matrixSolved) {
             int rowsSum = 0;
             for (Matrix m : sonsResults) {
@@ -115,6 +129,35 @@ public abstract class AbstractComputer implements Runnable{
         }
     }
 
+    /** PODEJSCIE NR X **/
+
+    protected void solve(){
+        if(!sonsList.isEmpty() && !sentToSons){
+            split();
+            sendToSons();
+        }else{
+            readyToSolve = true;
+            if(!sentToParent){
+                divide();
+            }
+        }
+    }
+
+    protected void split(){
+        solver.splitMatrix(sonsList.size());
+    }
+    protected void sendToSons(){
+        sendMatrices();
+    }
+
+    protected void divide(){
+        divider.divide();
+    }
+    protected void calculate(){
+
+    }
+
+    /** KONIEC PODEJSCIA NR X **/
 
     public void tick(){
         if(m1!=null && m2!= null) {
@@ -123,7 +166,7 @@ public abstract class AbstractComputer implements Runnable{
             if (!solver.isMatricesSplit()) {
                 solver.splitMatrix(sonsList.size());
             }
-            if (!matricesSent) {
+            if (!sentToSons) {
                 sendMatrices();
                 getInfoAboutSentMatrices();
             }
@@ -164,7 +207,7 @@ public abstract class AbstractComputer implements Runnable{
         this.matrixSolved = matrixSolved;
     }
 
-    private int[] bubbleSort(int[] numArray) {
+    protected int[] bubbleSort(int[] numArray) {
 
         int n = numArray.length;
         int temp = 0;
@@ -181,5 +224,13 @@ public abstract class AbstractComputer implements Runnable{
             }
         }
         return numArray;
+    }
+
+    public boolean isAlreadySplit() {
+        return alreadySplit;
+    }
+
+    public void setAlreadySplit(boolean alreadySplit) {
+        this.alreadySplit = alreadySplit;
     }
 }
