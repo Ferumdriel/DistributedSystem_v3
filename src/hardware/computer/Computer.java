@@ -1,4 +1,6 @@
-package hardware;
+package hardware.computer;
+
+import hardware.computer.AbstractComputer;
 
 /**
  * Created by Binio on 2017-01-22.

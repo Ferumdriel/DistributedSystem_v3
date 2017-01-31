@@ -1,5 +1,6 @@
-package hardware;
+package hardware.computer;
 
+import hardware.Processor;
 import math.MathSolver;
 import math.Matrix;
 import math.MatrixDivider;
@@ -29,6 +30,7 @@ public abstract class AbstractComputer implements Runnable{
     protected Thread thread;
 
     protected List<MultiComputer> sonsList;
+    protected AbstractComputer parent;
     protected Matrix m1;
     protected Matrix m2;
     protected Matrix finalM;
@@ -36,9 +38,39 @@ public abstract class AbstractComputer implements Runnable{
     protected boolean matrixSentToParent = false;
 
     //podejscie nr 2
-    protected boolean sentToSons = false;
-    protected boolean readyToSolve = false;
+//    protected boolean sentToSons = false;
     protected boolean sentToParent = false;
+    protected boolean matrixReady = false; //final matrix in Master Computer
+    protected boolean readyToSolve = false;
+
+    /** PODEJSCIE NR 3 **/
+    protected boolean sentToSons = false;
+
+    public void trick(){
+        //if already sent results back to parent - don't do anything, you can now chill
+        if(!sentToParent) { //hasn't sent results yet
+            if (doesHaveSons()) {   // !sonsList.isEmpty()
+                if (!sentToSons) { //hasn't sent to sons yet
+                    divide();
+                    sendToSons();
+                }
+                combineMatrices();
+            }else{
+                calculate();
+            }
+            sendToParent();
+        }
+    }
+
+    protected boolean doesHaveSons(){
+        return !sonsList.isEmpty();
+    }
+
+    public List<Matrix> getSonsResults() {
+        return sonsResults;
+    }
+
+    /** KONIEC PODEJSCIA NR 3 **/
 
     public boolean isReadyToExecute(){
         if(solver.getM1().getRows()==1 || sonsList.isEmpty()){
@@ -97,48 +129,79 @@ public abstract class AbstractComputer implements Runnable{
         }
     }
 
+    /** PODEJSCIE NR 3 **/
+
     protected void combineMatrices(){
         if(!matrixSolved) {
-            int rowsSum = 0;
-            for (Matrix m : sonsResults) {
-                rowsSum += m.getRows();
-            }
-            int[][] tmp = new int[rowsSum][sonsResults.get(0).getColumns()];
-            int[] rows = new int[rowsSum];
-            int[] columns = new int[sonsResults.get(0).getColumns()];
+            int rowsSum = sumRowsAmount();
 
-            for (int i = 0; i < sonsResults.size(); i++) {
-                for (int j = 0; j < sonsResults.get(i).getRows(); j++) {
-                    rows[i] = sonsResults.get(i).getRowNumbers()[j];
-                }
-            }
-            rows = bubbleSort(rows);
-            for (int i = 0; i < columns.length; i++) {
-                columns[i] = i;
-            }
+            int[][] tmp = combineToFinalMatrix(rowsSum, sonsResults.get(0).getColumns());
+            int[] rows = copyRowNumbers(rowsSum);
+            int[] columns = createDefaultColumnsNumbers();
 
-            for (Matrix m : sonsResults) {
-                for (int i = 0; i < m.getRows(); i++) {
-                    for (int j = 0; j < m.getColumns(); j++) {
-                        tmp[m.getRowNumbers()[i]][j] = m.getMatrix()[i][j];
-                    }
-                }
-            }
             finalM = new Matrix(tmp, rows, columns);
             matrixSolved = true;
         }
     }
 
-    /** PODEJSCIE NR X **/
+    protected int sumRowsAmount(){
+        int rowsSum = 0;
+        for (Matrix m : sonsResults) {
+            rowsSum += m.getRows();
+        }
+        return rowsSum;
+    }
 
+    protected int[] createDefaultColumnsNumbers(){
+        int[] columns = new int[sonsResults.get(0).getColumns()];
+        for (int i = 0; i < columns.length; i++) {
+            columns[i] = i;
+        }
+        return columns;
+    }
+
+    protected int[] copyRowNumbers(int rowsSum){
+        int[] rows = new int[rowsSum];
+        for (int i = 0; i < sonsResults.size(); i++) {
+            for (int j = 0; j < sonsResults.get(i).getRows(); j++) {
+                rows[i] = sonsResults.get(i).getRowNumbers()[j];
+            }
+        }
+        rows = bubbleSort(rows);
+        return rows;
+    }
+
+    protected int[][] combineToFinalMatrix(int rowsSum, int columns){
+        int[][] tmp = new int[rowsSum][columns];
+
+        for (Matrix m : sonsResults) {
+            for (int i = 0; i < m.getRows(); i++) {
+                for (int j = 0; j < m.getColumns(); j++) {
+                    tmp[m.getRowNumbers()[i]][j] = m.getMatrix()[i][j];
+                }
+            }
+        }
+        return tmp;
+    }
+
+
+
+    /** KONIEC PODEJSCIA NR 3 **/
+
+    /** PODEJSCIE NR X **/
+    //solve will tick many times so we have to keep checking if conditions are
     protected void solve(){
-        if(!sonsList.isEmpty() && !sentToSons){
+        if(!sonsList.isEmpty() && !sentToSons){ //if has sons and hasn't sent it to them yet = split matrix and send
             split();
             sendToSons();
-        }else{
-            readyToSolve = true;
-            if(!sentToParent){
-                divide();
+        }else if(isSonsMatrixListFilled()){ //if there's no more sons and it already got results from them then it has to solve it
+            if(!sentToParent && parent!=null){
+                calculate();
+                sendToParent();
+            }
+            else if(parent==null){
+                calculate();
+                matrixReady = true;
             }
         }
     }
@@ -154,8 +217,16 @@ public abstract class AbstractComputer implements Runnable{
         divider.divide();
     }
     protected void calculate(){
-
+        solver.solveMatrix();
     }
+    protected void sendToParent(){
+        parent.sonsResults.add(finalM);
+        sentToParent = true;
+    }
+    protected boolean isSonsMatrixListFilled(){
+        return sonsList.size()==sonsResults.size();
+    }
+
 
     /** KONIEC PODEJSCIA NR X **/
 

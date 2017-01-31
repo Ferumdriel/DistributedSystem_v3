@@ -1,8 +1,7 @@
 package system;
 
 
-import hardware.AbstractComputer;
-import hardware.MultiComputer;
+import hardware.computer.MultiComputer;
 import math.Matrix;
 
 import java.util.List;

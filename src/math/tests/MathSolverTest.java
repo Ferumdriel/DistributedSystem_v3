@@ -1,7 +1,6 @@
 package math.tests;
 
-import hardware.MultiComputer;
-import math.MathSolver;
+import hardware.computer.MultiComputer;
 import math.Matrix;
 import org.junit.Test;
 
@@ -17,12 +16,15 @@ public class MathSolverTest {
         MultiComputer mc = new MultiComputer(1);
         ExampleMatrix em = new ExampleMatrix();
         Matrix m = em.getM();
+
         mc.setMatrices(m,m);
-        MathSolver solver = new MathSolver(mc);
-        solver.addMatrixes(m,m);
-        solver.solveMatrix();
-        int expectedValue = 30;
-        assertEquals(expectedValue,mc.getFinalM().getMatrix()[0][0]);
+        mc.getDivider().addMatrices(m,m);
+        mc.getSolver().addMatrixes(m,m);
+        mc.getDivider().divide();
+        mc.getSolver().solveMatrix();
+
+        int expectedValue = 55;
+        assertEquals(expectedValue,mc.getFinalM().getMatrix()[1][1]);
     }
 
 }

@@ -1,6 +1,4 @@
-package hardware;
-
-import math.Matrix;
+package hardware.computer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +6,7 @@ import java.util.List;
 /**
  * Created by Binio on 2017-01-24.
  */
-public class MultiComputer extends AbstractComputer{
-    private MultiComputer parent;
+public class MultiComputer extends AbstractComputer {
 
 
     //MASTER MASTER
@@ -76,7 +73,7 @@ public class MultiComputer extends AbstractComputer{
                 m.start();
             }
         }
-        tick();
+        trick();
 
     }
 

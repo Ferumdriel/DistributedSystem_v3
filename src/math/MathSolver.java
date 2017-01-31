@@ -1,8 +1,6 @@
 package math;
 
-import hardware.AbstractComputer;
-import hardware.Processor;
-import org.junit.runner.Computer;
+import hardware.computer.AbstractComputer;
 
 import java.util.ArrayList;
 
@@ -32,10 +30,12 @@ public class MathSolver {
         return m1.getColumns()==m2.getRows();
     }
 
+    //assuming Matrix is already divided
     public void solveMatrix(){
         MatrixDivider divider = computer.getDivider();
-        divider.addMatrices(m1,m2);
-        divider.divide();
+        //wersja 3 nie obejmuje tu dividera
+//        divider.addMatrices(m1,m2);
+//        divider.divide();
 
         int limit = computer.getProcessors().length;
         int[][] matrix = new int[m1.getColumns()][m2.getRows()];
@@ -48,7 +48,7 @@ public class MathSolver {
             for(int j = 0; j < divider.getPairs().get(i).length; j++){ //go through all rows of pairs (their sum will give final value)
                 if(!computer.getProcessors()[k].isBusy()) {
                     computer.getProcessors()[k].multiply(divider.getPairs().get(i)[j][0], divider.getPairs().get(i)[j][1]);
-                    matrix[divider.getPositions().get(i)[0]][divider.getPositions().get(i)[1]] = computer.getProcessors()[k].getResult();
+                    matrix[divider.getPositions().get(i)[0]][divider.getPositions().get(i)[1]] += computer.getProcessors()[k].getResult();
                 }k++;
                 if(k >= limit){
                     k = 0;

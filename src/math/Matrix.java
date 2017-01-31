@@ -132,6 +132,10 @@ public class Matrix{
         return rowNumbers;
     }
 
+    public void setRowNumbers(int[] rowNumbers) {
+        this.rowNumbers = rowNumbers;
+    }
+
     public int[] getColumnNumbers() {
         return columnNumbers;
     }
