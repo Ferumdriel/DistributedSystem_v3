@@ -32,20 +32,14 @@ public class MatrixDivider {
     // to get value in 1 field you have to multiply specific row of m1 by specific column of m2
     public void divide(){
         int[] tmpM1;
-        int[] tmpM2;
         int tmpPairs[][] = new int[m1.getColumns()][2];
         int[] tmpPos = new int[2];
         for(int i = 0; i < m1.getRows(); i++){ //go through every row of m1
             tmpM1 = m1.getMatrix()[i]; //read specific row of first matrix
             for(int j = 0; j < m2.getColumns(); j++){ //go through every column of m2
-//                tmpM2 = m2.getMatrix()[j]; //read specific column of second matrix
                 for(int k = 0; k < m1.getColumns(); k++){ //go through every value in specific column
                     tmpPairs[k][0] = tmpM1[k];
-//                    try {
                         tmpPairs[k][1] = m2.getMatrix()[k][j];
-//                    }catch(ArrayIndexOutOfBoundsException e){
-//                        System.out.println("k: " + k + ", " + tmpPairs[k-1][1]);
-//                    }
                 }
                 pairs.add(cloneDoubleArray(tmpPairs));
                 tmpPos[0] = i;

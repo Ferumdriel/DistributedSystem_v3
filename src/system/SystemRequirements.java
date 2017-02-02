@@ -5,12 +5,12 @@ package system;
  */
 public class SystemRequirements {
 
-    public static final int MASTER_SONS = 2;
-    public static final int MASTER_SONS_SONS = 3;
-    public static final int MASTER_SONS_SONS_SONS = 4;
+    public static final int MASTER_SONS = 3;
+    public static final int MASTER_SONS_SONS = 4;
+    public static final int MASTER_SONS_SONS_SONS = 5;
 
-    public static final int a = 240;
-    public static final int b = 240;
+    public static final int a = 200;
+    public static final int b = 400;
 
 
 }

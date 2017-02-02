@@ -12,10 +12,6 @@ import java.util.List;
 public class MultiComputerSystem implements Runnable{
 
 
-
-    public static final int a = 240;
-    public static final int b = 240;
-
     MultiComputer master;
     List<MultiComputer> allConnected;
     private boolean systemGenerated = false;

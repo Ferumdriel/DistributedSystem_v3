@@ -74,7 +74,7 @@ public class MultiComputer extends AbstractComputer {
             }
         }
         while(!jobIsDone()) {
-            trick();
+            tick();
         }
         System.out.println("Task finished for computer: " + id);
 //        stop();

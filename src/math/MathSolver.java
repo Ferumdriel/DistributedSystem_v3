@@ -30,10 +30,6 @@ public class MathSolver {
         return m1.getColumns()==m2.getRows();
     }
 
-    public boolean splitArraysReady(){
-        return splitM1.size()==computer.getSonsList().size() && splitM2.size()==computer.getSonsList().size();
-    }
-
     //assuming Matrix is already divided
     public void solveMatrix(){
         MatrixDivider divider = computer.getDivider();
@@ -95,38 +91,6 @@ public class MathSolver {
         matricesSplit = true;
     }
 
-    private void splitToSendToProcessors(){
-        MatrixDivider divider = new MatrixDivider(m1, m2);
-
-    }
-
-    private void copyArraysByColumns(int startingPosition, int splitAmount){
-        int[][] matrix = m1.getMatrix();
-
-        int amountToSplit = (matrix[0].length-startingPosition)/splitAmount; //
-        int k = 0; //we're creating new (smaller) matrix so we start from 0
-        int[] columns = new int[amountToSplit];
-        int[] rows = new int[matrix.length];
-        int[][] tmp = new int[matrix.length][amountToSplit];
-        boolean rowsRdy = false; //supportive boolean to save rowNumber which should be equal to all matrix.length
-        int numberOfIterations = amountToSplit + startingPosition;
-
-        //we have to work on 2 matrixes (old and new one) at the same time so 'i', 'j', 'k'
-        //'i' might not be 0 from the original matrix
-        for(int i = startingPosition; i < numberOfIterations; i++){
-            for(int j = 0; j < matrix.length; j++){
-                if(!rowsRdy) {
-                    rows[j] = m1.getRowNumbers()[j];
-                }
-                tmp[j][k] = matrix[j][i];
-            }
-            rowsRdy = true;
-            columns[k] = m1.getColumnNumbers()[i];
-            k++;
-        }
-        splitM1.add(new Matrix(tmp, rows, columns));
-    }
-
     private void copyArraysRows(int startingPosition, int splitAmount){
         int[][] matrix = m1.getMatrix();
 
@@ -149,32 +113,6 @@ public class MathSolver {
             k++;
         }
         splitM1.add(new Matrix(tmp, rows, columns));
-    }
-
-    private void copyArraysByRows(int startingPosition, int splitAmount){
-        int[][] matrix = m2.getMatrix();
-
-        int amountToSplit = (matrix.length-startingPosition)/splitAmount; //
-        int k = 0;
-        int[] rows = new int[amountToSplit];
-        int[] columns = new int[matrix[0].length];
-        boolean columnsRdy = false; //supportive boolean to save columnNumber which should be equal to all matrix[0].length
-
-        int[][] tmp = new int[amountToSplit][matrix[0].length];
-        int numberOfIterations = amountToSplit + startingPosition;
-
-        for(int i = startingPosition; i < numberOfIterations; i++){
-            for(int j = 0; j < matrix[0].length; j++){
-                if(!columnsRdy) {
-                    columns[j] = m2.getColumnNumbers()[j];
-                }
-                tmp[k][j] = matrix[i][j];
-            }
-            columnsRdy = true;
-            rows[k] = m2.getRowNumbers()[i];
-            k++;
-        }
-        splitM2.add(new Matrix(tmp, rows, columns));
     }
 
     public void displaySplitLists(){

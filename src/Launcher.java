@@ -49,7 +49,7 @@ public class Launcher {
     }
 
     public static void results(){
-        System.out.println("Czesc wynikowa:");
+        System.out.println("Czesc wynikowa, wcisnij dowolny klawisz:");
         Scanner sc = new Scanner(System.in);
         String s = sc.nextLine();
     }
