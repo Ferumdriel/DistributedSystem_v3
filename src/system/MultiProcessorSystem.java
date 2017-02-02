@@ -1,15 +1,16 @@
 package system;
 
-
 import hardware.computer.MultiComputer;
 import math.Matrix;
 
 import java.util.List;
 
 /**
- * Created by Binio on 2017-01-24.
+ * Created by Binio on 2017-02-02.
  */
-public class MultiComputerSystem implements Runnable{
+public class MultiProcessorSystem implements Runnable{
+
+    public static final int MASTER_SONS = Math.max(SystemRequirements.MASTER_SONS,1)*Math.max(SystemRequirements.MASTER_SONS_SONS,1)* Math.max(SystemRequirements.MASTER_SONS_SONS_SONS,1);
 
 
     MultiComputer master;
@@ -20,7 +21,6 @@ public class MultiComputerSystem implements Runnable{
     private boolean taskCompleted = false;
     private long timer;
     private double executeTimer;
-
 
     Matrix m1;
     Matrix m2;
@@ -43,22 +43,8 @@ public class MultiComputerSystem implements Runnable{
         this.master = master;
         tmpID++;
         //master's sons
-        for(int i = 0; i < SystemRequirements.MASTER_SONS; i++){
+        for(int i = 0; i < MASTER_SONS; i++){
             master.createSon(tmpID++);
-        }
-        //sons of master's sons
-        for(MultiComputer m: master.getSonsList()){
-            for(int i = 0; i < SystemRequirements.MASTER_SONS_SONS; i++){
-                m.createSon(tmpID++);
-            }
-        }
-        //sons of sons of master's sons
-        for(MultiComputer m: master.getSonsList()) {
-            for (MultiComputer k : m.getSonsList()) {
-                for (int i = 0; i < SystemRequirements.MASTER_SONS_SONS_SONS; i++) {
-                    k.createSon(tmpID++);
-                }
-            }
         }
     }
 
@@ -75,7 +61,7 @@ public class MultiComputerSystem implements Runnable{
                 test[i][j] = i + j;
             }
         }
-
+    //
         int[][] test2 = new int[b][a];
         for(int i = 0; i < b; i++){
             for(int j  = 0; j < a; j++){
@@ -95,7 +81,7 @@ public class MultiComputerSystem implements Runnable{
 
     @Override
     public synchronized void run() {
-        System.out.println("-------------------------------SYSTEM MULTIKOMPUTEROW--------------------------\n\n\n\n\n\n");
+        System.out.println("-------------------------------SYSTEM WIELOPROCESOROWY--------------------------\n\n\n\n\n\n");
         generateSystem();
 
         timer = System.nanoTime();
@@ -104,13 +90,13 @@ public class MultiComputerSystem implements Runnable{
                 master.start();
                 if(master.hasFinalResult()){
                     taskCompleted = true;
-                    System.out.println("Koniec obliczen dla multikomputerow");
+                    System.out.println("Koniec obliczen dla wieloprocesorow");
 //                    master.getFinalM().display();
                 }
             }
         }
         executeTimer = ((System.nanoTime() - timer)/Math.pow(10,9));
-        System.out.printf("%40s%10fs\n","Czas na wykonanie zadania dla systemu multikomputerow:",executeTimer);
+        System.out.printf("%40s%10fs\n","Czas na wykonanie zadania dla systemu wieloprocesorow:",executeTimer);
 
         //in case it didn't stop earlier
 //        stop();
@@ -152,6 +138,10 @@ public class MultiComputerSystem implements Runnable{
     }
 
     public void displayTimeSpentOnExecution(){
-        System.out.printf("%40s%10fs\n","Czas na wykonanie zadania dla systemu multikomputerow:",executeTimer);
+        System.out.printf("%40s%10fs\n","Czas na wykonanie zadania dla systemu wieloprocesorow:",executeTimer);
+    }
+
+    public void displayFinalMatrix(){
+        master.getFinalM().display();
     }
 }

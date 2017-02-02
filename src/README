@@ -1,0 +1,12 @@
+App is supposed to multiply 2 matrices by splitting them into the smallest possible parts meanwhile sending them over to all computers connected to the system.
+There are 2 possible types of Distributed Systems:
+MultiComputerSystem:
+- there is MultiComputer(Master) connected with lower level MultiComputers which are connected with... etc. etc., the tree goes on
+- Master receives Matrices, splits them and sends to lower level parts that are supposed to divide Matrices into even smaller pieces and equate them
+- time spent to send packets is a possible issue
+MultiProcessorSystem:
+- there is MultiComputer(Master) connected with lower level Computers
+- system has common memory
+- queue is a possible issue
+25.01.2017:
+- Need to create properly working system of computers and make it runnable (Launcher)
