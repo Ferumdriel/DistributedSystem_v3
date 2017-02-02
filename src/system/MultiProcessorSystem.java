@@ -61,7 +61,7 @@ public class MultiProcessorSystem implements Runnable{
                 test[i][j] = i + j;
             }
         }
-
+    //
         int[][] test2 = new int[b][a];
         for(int i = 0; i < b; i++){
             for(int j  = 0; j < a; j++){
