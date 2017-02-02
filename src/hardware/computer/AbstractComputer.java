@@ -45,30 +45,94 @@ public abstract class AbstractComputer implements Runnable{
 
     /** PODEJSCIE NR 3 **/
     protected boolean sentToSons = false;
+    protected boolean gotMatrixFromParent = false;
 
     public void trick(){
-        //if already sent results back to parent - don't do anything, you can now chill
-        if(!sentToParent) { //hasn't sent results yet
-            if (doesHaveSons()) {   // !sonsList.isEmpty()
-                if (!sentToSons) { //hasn't sent to sons yet
-                    divide();
-                    sendToSons();
+//        System.out.printf("%3d:%20s%3d\n",id,"rozmiar wynikow, size:",sonsResults.size());
+//        System.out.printf("%3d:%20s\n",id,"dziala");
+        //if didn't get matrices then do nothing
+        //if you're master check conditions anyway
+//        if(hasMatricesToSolve() || isMaster()) {
+        if(gotMatrixFromParent || isMaster()) {
+//            System.out.printf("%3d:%20s\n",id,"hasMatricesToSolve");
+//            System.out.printf("%3d:%20s%5s\n",id,"sentToParent = ", sentToParent);
+            //if already sent results back to parent - don't do anything, you can now chill
+            if (!sentToParent) { //hasn't sent results yet to parent
+                if (doesHaveSons()) {   // !sonsList.isEmpty()
+//                    System.out.printf("%3d:%20s\n",id,"has sons");
+                    if (doesHaveParent()) { //isn't master computer
+                        if (!sentToSons && parent.sentToSons) { //hasn't sent to sons yet and already got from it's parent
+                            split();
+                            sendToSons();
+                        }
+                        if(gotAllMatricesFromSons()){
+//                            System.out.printf("%3d:%20s\n",id,"Got matrices from all sons");
+                            combineMatrices();
+                            sendToParent();
+                        }
+                    }else{ //is master computer
+//                        System.out.printf("%3d:%20s\n",id,"!doesHaveParent");
+                        if (!sentToSons) { //hasn't sent to sons yet
+                            split();
+                            sendToSons();
+                        }
+                        if(gotAllMatricesFromSons()){
+                            combineMatrices();
+                            sendToParent();
+                        }
+                    }
+                } else {
+                    calculate();
+                    sendToParent();
                 }
-                combineMatrices();
-            }else{
-                calculate();
+//                sendToParent();
             }
-            sendToParent();
         }
+    }
+
+    protected boolean jobIsDone(){
+        if(doesHaveParent()){
+            return sentToParent;
+        }else{
+            return hasFinalResult();
+        }
+    }
+
+
+    protected boolean gotAllMatricesFromSons(){
+//        System.out.printf("%3d:%20s:%3d\n",id,"matrices from x sons",sonsResults.size());
+        return sonsResults.size()==sonsList.size();
+    }
+
+    protected void checkProcedure(){
+
+    }
+
+    protected boolean doesHaveParent(){
+        return parent!=null;
     }
 
     protected boolean doesHaveSons(){
         return !sonsList.isEmpty();
     }
 
+    protected boolean hasMatricesToSolve(){
+        return m1!=null && m2!=null;
+    }
+
+    protected boolean isMaster(){
+        return parent==null;
+    }
+
+    public boolean hasFinalResult(){
+        return finalM!=null;
+    }
+
     public List<Matrix> getSonsResults() {
         return sonsResults;
     }
+
+
 
     /** KONIEC PODEJSCIA NR 3 **/
 
@@ -99,6 +163,8 @@ public abstract class AbstractComputer implements Runnable{
         int k = 0;
         for(MultiComputer m: sonsList){
             m.setMatrices(solver.getSplitM1().get(k++), solver.getM2());
+            m.gotMatrixFromParent = true;
+//            System.out.printf("%3d:%20s:%3d\n",id,"sentMatrixTo",m.id);
         }
         sentToSons = true;
     }
@@ -132,6 +198,7 @@ public abstract class AbstractComputer implements Runnable{
     /** PODEJSCIE NR 3 **/
 
     protected void combineMatrices(){
+//        System.out.printf("%3d:%20s%3d\n",id,"combineMatrices, size:",sonsResults.size());
         if(!matrixSolved) {
             int rowsSum = sumRowsAmount();
 
@@ -141,6 +208,7 @@ public abstract class AbstractComputer implements Runnable{
 
             finalM = new Matrix(tmp, rows, columns);
             matrixSolved = true;
+//            System.out.printf("%3d:%20s\n",id,"matrixSolved = true");
         }
     }
 
@@ -162,9 +230,10 @@ public abstract class AbstractComputer implements Runnable{
 
     protected int[] copyRowNumbers(int rowsSum){
         int[] rows = new int[rowsSum];
+        int tmpRow = 0;
         for (int i = 0; i < sonsResults.size(); i++) {
             for (int j = 0; j < sonsResults.get(i).getRows(); j++) {
-                rows[i] = sonsResults.get(i).getRowNumbers()[j];
+                rows[tmpRow++] = sonsResults.get(i).getRowNumbers()[j];
             }
         }
         rows = bubbleSort(rows);
@@ -174,13 +243,23 @@ public abstract class AbstractComputer implements Runnable{
     protected int[][] combineToFinalMatrix(int rowsSum, int columns){
         int[][] tmp = new int[rowsSum][columns];
 
+        int tmpRow = 0;
         for (Matrix m : sonsResults) {
             for (int i = 0; i < m.getRows(); i++) {
                 for (int j = 0; j < m.getColumns(); j++) {
-                    tmp[m.getRowNumbers()[i]][j] = m.getMatrix()[i][j];
+                    tmp[tmpRow][j] = m.getMatrix()[i][j];
                 }
+                tmpRow++;
             }
         }
+
+//        for (Matrix m : sonsResults) {
+//            for (int i = 0; i < m.getRows(); i++) {
+//                for (int j = 0; j < m.getColumns(); j++) {
+//                    tmp[m.getRowNumbers()[i]][j] = m.getMatrix()[i][j];
+//                }
+//            }
+//        }
         return tmp;
     }
 
@@ -190,27 +269,29 @@ public abstract class AbstractComputer implements Runnable{
 
     /** PODEJSCIE NR X **/
     //solve will tick many times so we have to keep checking if conditions are
-    protected void solve(){
-        if(!sonsList.isEmpty() && !sentToSons){ //if has sons and hasn't sent it to them yet = split matrix and send
-            split();
-            sendToSons();
-        }else if(isSonsMatrixListFilled()){ //if there's no more sons and it already got results from them then it has to solve it
-            if(!sentToParent && parent!=null){
-                calculate();
-                sendToParent();
-            }
-            else if(parent==null){
-                calculate();
-                matrixReady = true;
-            }
-        }
-    }
+//    protected void solve(){
+//        if(!sonsList.isEmpty() && !sentToSons){ //if has sons and hasn't sent it to them yet = split matrix and send
+//            split();
+//            sendToSons();
+//        }else if(isSonsMatrixListFilled()){ //if there's no more sons and it already got results from them then it has to solve it
+//            if(!sentToParent && parent!=null){
+//                calculate();
+//                sendToParent();
+//            }
+//            else if(parent==null){
+//                calculate();
+//                matrixReady = true;
+//            }
+//        }
+//    }
 
     protected void split(){
         solver.splitMatrix(sonsList.size());
+//        System.out.printf("%3d:%20s:%3d\n",id,"split dla x synow", sonsList.size());
     }
     protected void sendToSons(){
         sendMatrices();
+        System.out.printf("%3d:%20s\n",id,"sendToSons");
     }
 
     protected void divide(){
@@ -218,10 +299,14 @@ public abstract class AbstractComputer implements Runnable{
     }
     protected void calculate(){
         solver.solveMatrix();
+//        System.out.printf("%3d:%20s\n",id,"calculate");
     }
     protected void sendToParent(){
-        parent.sonsResults.add(finalM);
-        sentToParent = true;
+        if(doesHaveParent() && !sentToParent) {
+            parent.sonsResults.add(finalM);
+            sentToParent = true;
+            System.out.printf("%3d:%20s:%3d\n",id,"sent to parent", parent.id);
+        }
     }
     protected boolean isSonsMatrixListFilled(){
         return sonsList.size()==sonsResults.size();
@@ -304,4 +389,20 @@ public abstract class AbstractComputer implements Runnable{
     public void setAlreadySplit(boolean alreadySplit) {
         this.alreadySplit = alreadySplit;
     }
+
+    public String toString(){
+        return "Computer: [" + id + "]";
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void displayMatrices(){
+        System.out.println("M1:");
+        m1.display();
+        System.out.println("M2:");
+        m2.display();
+    }
+
 }

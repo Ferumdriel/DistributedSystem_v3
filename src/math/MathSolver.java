@@ -30,17 +30,23 @@ public class MathSolver {
         return m1.getColumns()==m2.getRows();
     }
 
+    public boolean splitArraysReady(){
+        return splitM1.size()==computer.getSonsList().size() && splitM2.size()==computer.getSonsList().size();
+    }
+
     //assuming Matrix is already divided
     public void solveMatrix(){
         MatrixDivider divider = computer.getDivider();
+        divider.addMatrices(m1,m2);
+        divider.divide();
         //wersja 3 nie obejmuje tu dividera
 //        divider.addMatrices(m1,m2);
 //        divider.divide();
 
         int limit = computer.getProcessors().length;
-        int[][] matrix = new int[m1.getColumns()][m2.getRows()];
-        int[] rows = m2.getColumnNumbers();
-        int[] columns = m1.getRowNumbers();
+        int[][] matrix = new int[m1.getRows()][m2.getColumns()];
+        int[] rows = m1.getRowNumbers();
+        int[] columns = m2.getColumnNumbers();
 
 
         int k = 0;
@@ -62,11 +68,11 @@ public class MathSolver {
 
     public void splitMatrix(int splitAmount){ //splitAmount == amount of computers that can receive parts of this matrix
         if (checkIfCorrect()) {
-            if (!computer.isReadyToExecute() && !computer.isAlreadySplit()) {
+//            if (!computer.isReadyToExecute() && !computer.isAlreadySplit()) {
                 splitToSendFurther(splitAmount);
-            }else{
-                solveMatrix();
-            }
+//            }else{
+//                solveMatrix();
+//            }
         }else {
                 System.out.println("Niepoprawny rozmiar macierzy.");
             }
@@ -201,5 +207,9 @@ public class MathSolver {
 
     public Matrix getM2() {
         return m2;
+    }
+
+    public String toString(){
+        return "MathSolver of computer: " + computer.getId();
     }
 }

@@ -16,6 +16,7 @@ public class MatrixDividerTest {
 
         MatrixDivider divider = prepDivider();
         divider.divide();
+
         int expectedPosition = 2; //positions[1][4] == get(5)
         assertEquals(expectedPosition, divider.getPositions().get(20)[0]); //get(20)[0] -> m1.row = 2 {0,1,2,3,4,5,6,7,8,9}
     }

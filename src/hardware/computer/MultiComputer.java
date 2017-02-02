@@ -67,17 +67,20 @@ public class MultiComputer extends AbstractComputer {
 //    }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         if (!sonsList.isEmpty()) {
             for(MultiComputer m: sonsList){
                 m.start();
             }
         }
-        trick();
-
+        while(!jobIsDone()) {
+            trick();
+        }
+        System.out.println("Task finished for computer: " + id);
+//        stop();
     }
 
-    public void start(){
+    public synchronized void start(){
         if(running){
             return;
         }
@@ -87,7 +90,7 @@ public class MultiComputer extends AbstractComputer {
         start();
     }
 
-    public void stop(){
+    public synchronized void stop(){
         if(!running) {
             return;
         }

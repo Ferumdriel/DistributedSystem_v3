@@ -40,4 +40,17 @@ public class MultiComputerTest{
     public void sendToParent() throws Exception {
     }
 
+    @Test
+    public void sendToSons() throws Exception {
+        ExampleMatrix m = new ExampleMatrix();
+        ExampleMatrix m1 = new ExampleMatrix(5);
+        MultiComputer mc = new MultiComputer(1);
+        MultiComputer mc1 = new MultiComputer(2);
+
+
+        mc.setMatrices(m.getM(),m1.getM());
+        mc.split();
+        mc.sendToSons();
+
+    }
 }

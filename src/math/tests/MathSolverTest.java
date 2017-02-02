@@ -18,13 +18,15 @@ public class MathSolverTest {
         Matrix m = em.getM();
 
         mc.setMatrices(m,m);
-        mc.getDivider().addMatrices(m,m);
+//        mc.getDivider().addMatrices(m,m);
         mc.getSolver().addMatrixes(m,m);
-        mc.getDivider().divide();
+//        mc.getDivider().divide();
         mc.getSolver().solveMatrix();
 
         int expectedValue = 55;
         assertEquals(expectedValue,mc.getFinalM().getMatrix()[1][1]);
     }
+
+
 
 }
